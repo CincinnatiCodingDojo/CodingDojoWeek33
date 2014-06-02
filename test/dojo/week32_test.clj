@@ -1,7 +1,6 @@
 (ns dojo.week32-test
-  (:require [clojure.test :refer :all]
+  (:require [midje.sweet :refer :all]
             [dojo.week32 :refer :all]))
 
-(deftest a-test
-  (testing "FIXME, I fail."
-    (is (= 0 1))))
+(fact "FIXME, I fail."
+  0 => 1)
