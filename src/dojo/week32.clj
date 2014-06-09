@@ -3,7 +3,7 @@
 
 (defn read-file-into-seq []
   (with-open [rdr (clojure.java.io/reader
-                    "/Users/be65039/Development/open/cincy-code-dojo/dojo.week32/resources/words.txt")]
+                    "resources/words.txt")]
     (doall (line-seq rdr))))
 
 (defn length-of-word [word]
@@ -20,3 +20,16 @@
 (defn compare-words [word1 word2]
   (count (filter true? (map = word1 word2)))
   )
+
+(defn guess [state word]
+  (assoc state :matches (compare-words word (:password state))
+               :count (inc (:count state))))
+
+(defn init-state [wordlist num-words word-length]
+  { :count 0 :words (get-possible-passwords num-words wordlist)}
+)
+
+(defn get-words-of-length [wordlist num-words word-length]
+  (take num-words  (filter #(= (length-of-word %) word-length) wordlist)
+   )
+)
