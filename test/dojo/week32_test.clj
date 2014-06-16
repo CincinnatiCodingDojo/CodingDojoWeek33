@@ -20,27 +20,36 @@
   (compare-words "compute" "playful") => 0)
 
 (facts "guess"
-  (let [state {:words ["compute" "playful"] :count 0 :password "compute"}]
+  (let [state {:words ["compute" "playful"] :remaining-guesses 3 :password "compute"}]
 	(fact "can count number of tries"
-	  (guess state "playful" ) => (contains {:count 1}))
+	  (guess state "playful" ) => (contains {:remaining-guesses 2}))
 	(fact "returns number of letter matches"
 	  (guess state "playful" ) => (contains {:matches 0})
 	  (guess state "compute" ) => (contains {:matches 7}))))
 
 (facts "init-state"
-	(let [wordlist ["a" "afd" "b" "c" "asd"]]
-		(fact "generates an initial game state with count 0"
-			(init-state wordlist 2 1) => (contains {:count 0}))
-		#_(fact "generates a valid word list"
-			(init-state wordlist 2 1) => (contains {:words ["a" "b"]}))
-	)
-) 
+
+  (let [wordlist ["a" "afd" "b" "c" "asd"]]
+    (fact "generates an initial game state with guesses left as 3"
+      (init-state wordlist 2 1) => (contains {:remaining-guesses 3}))
+    (fact "generates a valid word list"
+      (init-state wordlist 2 1) => (contains {:words ["a" "b"]}))
+    (fact "get a password that is in the list of words"
+      (init-state wordlist 2 1) => (fn [state] (contains? (set (:words state)) (:password state))))
+    )
+)
 
 (fact "can filter possible passwords from given list"
-	(let [wordlist ["abd" "bcd"]]
-		(get-words-of-length wordlist 1 3) => ["abd"])
-		(get-words-of-length wordlist 1 3) => ["abd"])
-	
-	)
+  (let [wordlist ["abd" "a" "bcd" "b"]]
+    (get-words-of-length wordlist 1 3) => ["abd"]
+    (get-words-of-length wordlist 2 1) => ["a" "b"]))
 
+(fact "guess match right password"
+  (is-winner-you {:matches 7 :password "prateek"}) => true
+  (is-winner-you {:matches 6 :password "parteek"}) => false
+  )
+
+(fact "exceeded maximum number of guesses"
+  (has-exhausted-number-of-guesses {:remaining-guesses 0}) => true
+  (has-exhausted-number-of-guesses {:remaining-guesses 1}) => false)
 

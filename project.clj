@@ -1,4 +1,4 @@
-(defproject dojo.week32 "0.1.0-SNAPSHOT"
+(defproject dojo.week33 "0.1.0-SNAPSHOT"
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
@@ -7,4 +7,5 @@
   :main ^:skip-aot dojo.week32
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}
-             :dev {:dependencies [[midje "1.6.3"]]}})
+             :dev {:dependencies [[midje "1.6.3"]]
+                   :repl-options {:init (require '[midje.repl :refer [autotest]])}}})

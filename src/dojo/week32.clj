@@ -23,13 +23,34 @@
 
 (defn guess [state word]
   (assoc state :matches (compare-words word (:password state))
-               :count (inc (:count state))))
-
-(defn init-state [wordlist num-words word-length]
-  { :count 0 :words (get-possible-passwords num-words wordlist)}
-)
+               :remaining-guesses (dec (:remaining-guesses state))))
 
 (defn get-words-of-length [wordlist num-words word-length]
-  (take num-words  (filter #(= (length-of-word %) word-length) wordlist)
-   )
-)
+  (take num-words (filter #(= (length-of-word %) word-length) wordlist)))
+
+(defn init-state [wordlist num-words word-length]
+  (let [words (get-words-of-length wordlist num-words word-length)]
+    { :remaining-guesses 3 :words words :password (first words)}))
+
+(defn is-winner-you [state]
+  (= (count (:password state)) (:matches state)))
+
+(defn has-exhausted-number-of-guesses [state]
+  (<= (:remaining-guesses state) 0)
+  )
+
+(defn run-steps [state]
+  (if (is-winner-you state)
+    (println "You win!")
+    (if (has-exhausted-number-of-guesses state)
+      (println "You lose")
+      (do
+        (println "Make a guess")
+        (run-steps (guess state (read-line)))))))
+
+(defn print-passwords [state]
+  (println (:words state))
+  state)
+
+(defn -main [& args]
+    (run-steps (print-passwords (init-state (read-file-into-seq) 5 7))))
